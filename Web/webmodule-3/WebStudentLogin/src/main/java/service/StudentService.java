@@ -3,43 +3,124 @@ package service;
 import model.Student;
 import service.IStudentService.IStudentService;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StudentService implements IStudentService<Student> {
-    private List<Student> students = new ArrayList<>();
+    Connection connection = ConnectionToMySQL.getConnection();
+
     public StudentService() {
-        this.students.add(new Student(1,"Linh",20, "https://taimienphi.vn/tmp/cf/aut/anh-gai-xinh-1.jpg"));
     }
+
     @Override
     public void add(Student student) {
-        this.students.add(student);
+        String sql = "insert into students(name, age, image) value (?, ?, ?);";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, student.getName());
+            preparedStatement.setInt(2, student.getAge());
+            preparedStatement.setString(3, student.getImage());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public int findIndexById(int id) {
-        for (int i = 0; i < this.students.size(); i++) {
-            if (this.students.get(i).getId() == id){
-                return i;
-            }
-        }
         return -1;
+    }
+
+    public Student findStudentById(int id) {
+        String sql = "select * from students where id = ?;";
+        Student student = null;
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                int age = resultSet.getInt("age");
+                String image = resultSet.getString("image");
+                student = new Student(id, name, age, image);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return student;
+    }
+
+    public List<Student> findStudentByName(String nameSearch) {
+        List<Student> students = new ArrayList<>();
+        String sql = "select * from students where name like ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, "%" + nameSearch + "%");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int age = resultSet.getInt("age");
+                String image = resultSet.getString("image");
+                Student student = new Student(id, name, age, image);
+                students.add(student);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return students;
     }
 
     @Override
     public void delete(int id) {
-        int index = findIndexById(id);
-        this.students.remove(index);
+        String sql = "delete from students where id = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void edit(int id, Student student) {
-        int index = findIndexById(id);
-        this.students.set(index, student);
+        String sql = "update students set name = ?, age = ?, image = ? where id = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, student.getName());
+            preparedStatement.setInt(2, student.getAge());
+            preparedStatement.setString(3, student.getImage());
+            preparedStatement.setInt(4, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<Student> findAll() {
-        return this.students;
+        List<Student> students = new ArrayList<>();
+        String sql = "select * from students;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int age = resultSet.getInt("age");
+                String image = resultSet.getString("image");
+
+                Student student = new Student(id, name, age, image);
+                students.add(student);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return students;
     }
 }

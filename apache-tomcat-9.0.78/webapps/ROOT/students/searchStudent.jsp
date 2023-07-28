@@ -13,17 +13,6 @@
 <body>
 <table border="1">
     <tr>
-        <form action="http://localhost:8080/students" method="get">
-            <td>
-                <input type="hidden" name="action" value="searchStudent">
-                <input type="text" name="name" placeholder="Nhập tên muốn tìm kiếm">
-            </td>
-            <td>
-                <button>Tìm kiếm</button>
-            </td>
-        </form>
-    </tr>
-    <tr>
         <td>Id</td>
         <td>Name</td>
         <td>Age</td>
@@ -41,12 +30,16 @@
         </tr>
     </c:forEach>
     <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
         <td>
-            <a href="http://localhost:8080/students?action=add">Thêm sinh viên</a>
+            <a href="http://localhost:8080//students?action=findAll">Trở về</a>
         </td>
-        <td><a href="http://localhost:8080/user?action=logout">dang xuat</a></td>
     </tr>
-
 
 </table>
 </body>

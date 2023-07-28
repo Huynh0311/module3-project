@@ -12,7 +12,17 @@
 </head>
 <body>
 <table border="1">
-    <tr><a href="http://localhost:8080/students?action=add">Thêm sinh viên</a></tr>
+    <tr>
+        <form action="http://localhost:8080/students" method="get">
+            <td>
+                <input type="hidden" name="action" value="searchStudent">
+                <input type="text" name="name" placeholder="Nhập tên muốn tìm kiếm">
+            </td>
+            <td>
+                <button>Tìm kiếm</button>
+            </td>
+        </form>
+    </tr>
     <tr>
         <td>Id</td>
         <td>Name</td>
@@ -26,10 +36,18 @@
             <td>${student.name}</td>
             <td>${student.age}</td>
             <td><img src="${student.image}" alt=""></td>
-            <td><a href="http://localhost:8080/students?action=edit&id=${student.id}&name=${student.name}&age=${student.age}&image=${student.image}">Sửa</a></td>
+            <td><a href="http://localhost:8080/students?action=edit&id=${student.id}">Sửa</a></td>
             <td><a href="http://localhost:8080/students?action=delete&id=${student.id}">Xóa</a></td>
         </tr>
     </c:forEach>
+    <tr>
+        <td>
+            <a href="http://localhost:8080/students?action=add">Thêm sinh viên</a>
+        </td>
+        <td><a href="http://localhost:8080/user?action=logout">dang xuat</a></td>
+    </tr>
+
+
 </table>
 </body>
 </html>

@@ -12,10 +12,10 @@
 <body>
 <form action="http://localhost:8080/students?action=edit" method="post">
 
-    <input type="text" name="id" value="${students.id}">
-    <input type="text" name="name" value="${students.name}" >
-    <input type="text" name="age" value="${students.age}">
-    <input type="text" name="image" value="${students.image}">
+    <input type="text" name="id" value="${student.id}" readonly>
+    <input type="text" name="name" value="${student.name}" >
+    <input type="text" name="age" value="${student.age}">
+    <input type="text" name="image" value="${student.image}">
     <button>Sửa</button>
 </form>
 </body>

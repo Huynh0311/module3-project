@@ -1,5 +1,6 @@
 package controller;
 
+import filter.SessionUser;
 import model.Student;
 import service.StudentService;
 
@@ -15,23 +16,41 @@ public class StudentController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("action");
-        switch (action) {
-            case "findAll":
-                showAll(request, response);
-                break;
-            case "add":
-                showAddForm(request, response);
-                break;
-            case "delete":
-                delete(request, response);
-                break;
-            case "edit":
-                edit(request, response);
-                break;
-            default:
-                showError(request, response);
+        boolean check = SessionUser.checkUser(request);
+        if (check) {
+            String action = request.getParameter("action");
+            switch (action) {
+                case "findAll":
+                    showAll(request, response);
+                    break;
+                case "add":
+                    showAddForm(request, response);
+                    break;
+                case "delete":
+                    delete(request, response);
+                    break;
+                case "edit":
+                    edit(request, response);
+                    break;
+                case "searchStudent":
+                    searchStudent(request, response);
+                    break;
+                default:
+                    showError(request, response);
+            }
+        } else {
+            response.sendRedirect("/user?action=login");
         }
+
+    }
+
+    private void searchStudent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("students/searchStudent" +
+                ".jsp");
+        String namesearch = request.getParameter("name");
+        List<Student> students = studentService.findStudentByName(namesearch);
+        request.setAttribute("students", students);
+        dispatcher.forward(request, response);
     }
 
     public void showAll(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -46,25 +65,21 @@ public class StudentController extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    public void  showAddForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void showAddForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher dispatcher = request.getRequestDispatcher("students/addStudent.jsp");
         dispatcher.forward(request, response);
     }
 
-    public void  delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         this.studentService.delete(id);
         response.sendRedirect("/students?action=findAll");
     }
 
-    public void  edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        String name = request.getParameter("name");
-        int age = Integer.parseInt(request.getParameter("age"));
-        String image = request.getParameter("image");
-        Student student = new Student(id, name, age, image);
-        request.setAttribute("students", student);
-
+        Student student = studentService.findStudentById(id);
+        request.setAttribute("student", student);
         RequestDispatcher dispatcher = request.getRequestDispatcher("students/editStudent.jsp");
         dispatcher.forward(request, response);
     }
@@ -72,7 +87,7 @@ public class StudentController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        switch (action){
+        switch (action) {
             case "add":
                 addStudent(request, response);
                 break;
@@ -83,22 +98,27 @@ public class StudentController extends HttpServlet {
     }
 
     public void addStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("name");
         int age = Integer.parseInt(request.getParameter("age"));
         String image = request.getParameter("image");
-        Student student = new Student(id, name, age, image);
+        Student student = new Student(name, age, image);
         studentService.add(student);
         response.sendRedirect("/students?action=findAll");
     }
 
     public void editStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
+        Student student = getValue(request);
+        studentService.edit(id, student);
+        response.sendRedirect("/students?action=findAll");
+    }
+
+    public Student getValue(HttpServletRequest request) {
+        int id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("name");
         int age = Integer.parseInt(request.getParameter("age"));
         String image = request.getParameter("image");
         Student student = new Student(id, name, age, image);
-        studentService.edit(id, student);
-        response.sendRedirect("/students?action=findAll");
+        return student;
     }
 }

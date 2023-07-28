@@ -11,7 +11,6 @@
 </head>
 <body>
 <form action="http://localhost:8080/students?action=add" method="post">
-    <input type="text" name="id" placeholder="id">
     <input type="text" name="name" placeholder="name">
     <input type="text" name="age" placeholder="age">
     <input type="text" name="image" placeholder="image">
