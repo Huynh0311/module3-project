@@ -1,0 +1,45 @@
+
+img {
+    width: 80px;
+    height: 80px;
+}
+body{
+}
+
+.header{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.nav-bar{
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main{
+    margin-top: 16px;
+    height: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+a{
+    text-decoration: none;
+    background-color: #d5d5d5;
+    padding: 4px;
+    color: black;
+    border: 1px solid black;
+}
+
+a:hover{
+    opacity: 0.75;
+}
+
+td{
+    padding: 8px;
+    text-align: center;
+}

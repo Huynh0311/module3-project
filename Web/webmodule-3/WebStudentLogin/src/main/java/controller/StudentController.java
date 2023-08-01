@@ -35,6 +35,9 @@ public class StudentController extends HttpServlet {
                 case "searchStudent":
                     searchStudent(request, response);
                     break;
+                case "detail":
+                    showFormDetail(request, response);
+                    break;
                 default:
                     showError(request, response);
             }
@@ -42,6 +45,15 @@ public class StudentController extends HttpServlet {
             response.sendRedirect("/user?action=login");
         }
 
+    }
+
+    private void showFormDetail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Student student = studentService.findStudentById(id);
+
+        request.setAttribute("student", student);
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("students/detail.jsp");
+        requestDispatcher.forward(request, response);
     }
 
     private void searchStudent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

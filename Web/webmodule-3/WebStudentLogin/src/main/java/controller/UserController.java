@@ -21,7 +21,16 @@ public class UserController extends HttpServlet {
             case "logout":
                 logout(request,response);
                 break;
+            case "informationUser":
+                showInformationUser(request, response);
+                break;
         }
+    }
+
+    private void showInformationUser(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        session.getId();
+
     }
 
     private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
